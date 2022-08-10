@@ -10,14 +10,14 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:logviewer.helloWorld"
+    "onCommand:editor.printReferences"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "logviewer.helloWorld",
-        "title": "Hello World"
+        "command": "editor.printReferences",
+        "title": "LogViewer"
       }
     ]
   },
