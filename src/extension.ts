@@ -3,6 +3,11 @@ import { workspace, Uri, window, commands, ExtensionContext, Disposable } from '
 import Provider from './provider';
 import * as panel from './panel';
 
+
+function addRule(to: panel.EntryList) {
+
+}
+
 export function activate(context: ExtensionContext) {
 	console.log('Congratulations, your extension "logviewer" is now active!');
 
@@ -21,12 +26,39 @@ export function activate(context: ExtensionContext) {
 						.then(doc => window.showTextDocument(doc, editor.viewColumn! + 1));
 	});
 
-
-	window.registerTreeDataProvider('highlight-panel', new panel.EntryList());
-	window.registerTreeDataProvider('hide-panel', new panel.EntryList());
-
-
 	context.subscriptions.push(provider, commandRegistration, providerRegisters);
+
+	const regexRules = new panel.EntryList();
+	regexRules.add("^$");
+
+	window.registerTreeDataProvider('rule-panel', regexRules);
+
+	commands.registerCommand('logviewer.add-rule', ()=>{
+		window.showInputBox({
+			prompt: "input regex",
+		}).then(doc => {
+			if (doc) {
+				regexRules.add(doc);
+			}
+		});
+	});
+
+	commands.registerCommand('logviewer.rm-rule', (item)=>{
+		regexRules.remove(item);
+	});
+
+	commands.registerCommand('logviewer.edit-rule', (item: panel.EntryItem)=>{
+		window.showInputBox({
+			value: item.getRegex()
+		}).then(doc => {
+			if (doc === undefined || doc === '') {
+				regexRules.remove(item);
+			} else if (doc !== item.getRegex()) {
+				item.setRegex(doc);
+				regexRules.update(item);
+			}
+		});
+	});
 }
 
 // this method is called when your extension is deactivated

@@ -21,7 +21,7 @@
         "title": "LogViewer"
       },
       {
-        "command": "logviewer.addrule",
+        "command": "logviewer.add-rule",
         "title": "添加规则",
         "icon": {
           "dark": "resources/dark/plus.svg",
@@ -29,7 +29,7 @@
         }
       },
       {
-        "command": "logviewer.rmrule",
+        "command": "logviewer.rm-rule",
         "title": "删除规则",
         "icon": {
           "dark": "resources/dark/minus.svg",
@@ -37,7 +37,7 @@
         }
       },
       {
-        "command": "logviewer.editrule",
+        "command": "logviewer.edit-rule",
         "title": "修改规则",
         "icon": {
           "dark": "resources/dark/pencil.svg",
@@ -57,32 +57,28 @@
     "views": {
       "logviewer-panel": [
         {
-          "id": "highlight-panel",
-          "name": "高亮"
-        },
-        {
-          "id": "hide-panel",
-          "name": "隐藏"
+          "id": "rule-panel",
+          "name": "规则列表"
         }
       ]
     },
     "menus": {
       "view/title": [
         {
-          "command": "logviewer.addrule",
-          "when": "view == highlight-panel || view == hide-panel",
+          "command": "logviewer.add-rule",
+          "when": "view == rule-panel",
           "group": "navigation"
         }
       ],
       "view/item/context": [
         {
-          "command": "logviewer.rmrule",
-          "when": "view == highlight-panel || view == hide-panel",
+          "command": "logviewer.rm-rule",
+          "when": "view == rule-panel ",
           "group": "inline"
         },
         {
-          "command": "logviewer.editrule",
-          "when": "view == highlight-panel || view == hide-panel",
+          "command": "logviewer.edit-rule",
+          "when": "view == rule-panel",
           "group": "inline"
         }
       ]
