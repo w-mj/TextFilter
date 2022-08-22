@@ -1,4 +1,4 @@
-import { workspace, Uri, window, commands, ExtensionContext, Disposable } from 'vscode';
+import { workspace, Uri, window, commands, ExtensionContext, Disposable, languages } from 'vscode';
 
 import Provider from './provider';
 import * as panel from './panel';
@@ -11,13 +11,14 @@ export function activate(context: ExtensionContext) {
 	const provider = new Provider();
 
 	const providerRegisters = Disposable.from(
-		workspace.registerTextDocumentContentProvider(Provider.scheme, provider)
+		workspace.registerTextDocumentContentProvider(Provider.scheme, provider),
+		languages.registerDocumentLinkProvider({ scheme: Provider.scheme }, provider)
 	);
 
 
 	const commandRegistration = commands.registerTextEditorCommand('logviewer.showLog', editor => {
 		const logUri = Uri.parse(`${Provider.scheme}:${editor.document.uri.toString()}`);
-		console.log(logUri);
+		// console.log(logUri);
 		return workspace.openTextDocument(logUri)
 						.then(doc => window.showTextDocument(doc, editor.viewColumn! + 1));
 	});
@@ -62,6 +63,7 @@ export function activate(context: ExtensionContext) {
 	commands.registerCommand("logviewer.change-mode", (item: panel.FilterItem)=>{
 		item.changeMode();
 		regexRules.update(item);
+		provider.update(undefined);
 	});
 }
 

@@ -3,11 +3,17 @@ import { FilterItemMode, regexRules } from './panel';
 
 class FilterDocument {
     private readonly originUri;
+    private links: vscode.DocumentLink[] = [];
     constructor(uri: vscode.Uri) {
         this.originUri = uri;
     }
 
+    getLinks(): vscode.DocumentLink[] {
+        return this.links;
+    }
+
     getText(): Thenable<string> {
+        this.links = [];
         return new Promise((resolve, reject)=>{
             const regs = regexRules.all();
             let buffer: string[] = [];
@@ -27,7 +33,9 @@ class FilterDocument {
                                 case FilterItemMode.Hide:
                                     break;
                                 case FilterItemMode.Highlight:
+                                    const range = new vscode.Range(buffer.length, 0, buffer.length, line.text.length);
                                     buffer.push(line.text);
+                                    this.links.push(new vscode.DocumentLink(range, this.originUri.with({fragment: String(i + 1)})));
                                     break;
                             };
                             break;  // 仅匹配第一个规则
@@ -45,15 +53,21 @@ class FilterDocument {
 }
 
 
-export default class Provider implements vscode.TextDocumentContentProvider, vscode.DocumentLinkProvider {
+export default class Provider implements 
+    vscode.TextDocumentContentProvider, vscode.DocumentLinkProvider {
+
     provideDocumentLinks(document: vscode.TextDocument, token: vscode.CancellationToken): vscode.ProviderResult<vscode.DocumentLink[]> {
-        throw new Error('Method not implemented.');
+        return this._documents.get(document.uri.toString())?.getLinks();
     }
 
     static scheme = 'logviewer';
 
     private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
     onDidChange: vscode.Event<vscode.Uri> = this._onDidChange.event;
+
+    readonly editorDecoration = vscode.window.createTextEditorDecorationType({
+        textDecoration: "underline"
+    });
 
     private _documents = new Map<string, FilterDocument>;
 
@@ -76,9 +90,10 @@ export default class Provider implements vscode.TextDocumentContentProvider, vsc
             }
         }
     }
-    
+
     dispose() {
         this._documents.clear();
+        this._onDidChange.dispose();
     }
 
 }
