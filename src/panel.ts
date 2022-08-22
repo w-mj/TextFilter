@@ -1,3 +1,4 @@
+import path = require('path');
 import * as vscode from 'vscode';
 
 export enum FilterItemMode {
@@ -14,13 +15,27 @@ class FilterItemLabel implements vscode.TreeItemLabel {
         this.highlights = [[0, label.length]];
     }
 }
+
+class FilterItemCommand implements vscode.Command {
+    title: string;
+    command: string;
+    tooltip?: string | undefined;
+    arguments?: any[] | undefined;
+    constructor(item: FilterItem) {
+        this.title = "Change Mode";
+        this.command = "logviewer.change-mode";
+        this.tooltip = "Change Mode";
+        this.arguments = [item];
+    }
+}
     
 export class FilterItem extends vscode.TreeItem {
-    private mode: FilterItemMode;
+    private mode: FilterItemMode = FilterItemMode.None;
     private reg?: RegExp = undefined;
     constructor(regex: string, mode: FilterItemMode=FilterItemMode.None) {
         super(regex, vscode.TreeItemCollapsibleState.None);
-        this.mode = mode;
+        this.command = new FilterItemCommand(this);
+        this.setMode(mode);
         this.setRegex(regex);
     }
 
@@ -52,11 +67,21 @@ export class FilterItem extends vscode.TreeItem {
 
     setMode(mode: FilterItemMode) {
         this.mode = mode;
+        const iconPaths = [
+            "resources/sun.svg",
+            "resources/eye-slash.svg",
+            "resources/cross-23.svg"
+        ];
+        this.iconPath = path.join(__filename, "../..", iconPaths[this.mode]);
     }
 
     getRegex() {
         return this.reg;
     }
+
+	changeMode() {
+        this.setMode((this.mode as number + 1) % 3);
+	}
 }
 
 export class EntryList implements vscode.TreeDataProvider<FilterItem> {

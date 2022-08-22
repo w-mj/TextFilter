@@ -43,6 +43,10 @@
           "dark": "resources/dark/pencil.svg",
           "light": "resources/light/pencil.svg"
         }
+      },
+      {
+        "command": "logviewer.change-mode",
+        "title": "Change Mode"
       }
     ],
     "viewsContainers": {

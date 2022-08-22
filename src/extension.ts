@@ -58,6 +58,11 @@ export function activate(context: ExtensionContext) {
 			}
 		});
 	});
+
+	commands.registerCommand("logviewer.change-mode", (item: panel.FilterItem)=>{
+		item.changeMode();
+		regexRules.update(item);
+	});
 }
 
 // this method is called when your extension is deactivated
