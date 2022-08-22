@@ -2,11 +2,8 @@ import { workspace, Uri, window, commands, ExtensionContext, Disposable } from '
 
 import Provider from './provider';
 import * as panel from './panel';
+import { regexRules } from './panel';
 
-
-function addRule(to: panel.EntryList) {
-
-}
 
 export function activate(context: ExtensionContext) {
 	console.log('Congratulations, your extension "logviewer" is now active!');
@@ -19,7 +16,6 @@ export function activate(context: ExtensionContext) {
 
 
 	const commandRegistration = commands.registerTextEditorCommand('logviewer.showLog', editor => {
-		console.log(editor.document.uri.toString());
 		const logUri = Uri.parse(`${Provider.scheme}:${editor.document.uri.toString()}`);
 		console.log(logUri);
 		return workspace.openTextDocument(logUri)
@@ -28,7 +24,6 @@ export function activate(context: ExtensionContext) {
 
 	context.subscriptions.push(provider, commandRegistration, providerRegisters);
 
-	const regexRules = new panel.EntryList();
 	regexRules.add("^$");
 
 	window.registerTreeDataProvider('rule-panel', regexRules);
@@ -39,23 +34,27 @@ export function activate(context: ExtensionContext) {
 		}).then(doc => {
 			if (doc) {
 				regexRules.add(doc);
+				provider.update(undefined);
 			}
 		});
 	});
 
 	commands.registerCommand('logviewer.rm-rule', (item)=>{
 		regexRules.remove(item);
+		provider.update(undefined);
 	});
 
-	commands.registerCommand('logviewer.edit-rule', (item: panel.EntryItem)=>{
+	commands.registerCommand('logviewer.edit-rule', (item: panel.FilterItem)=>{
 		window.showInputBox({
-			value: item.getRegex()
+			value: item.getRegexString()
 		}).then(doc => {
 			if (doc === undefined || doc === '') {
 				regexRules.remove(item);
-			} else if (doc !== item.getRegex()) {
+				provider.update(undefined);
+			} else if (doc !== item.getRegexString()) {
 				item.setRegex(doc);
 				regexRules.update(item);
+				provider.update(undefined);
 			}
 		});
 	});
