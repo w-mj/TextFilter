@@ -66,7 +66,7 @@ export default class Provider implements
     onDidChange: vscode.Event<vscode.Uri> = this._onDidChange.event;
 
     readonly editorDecoration = vscode.window.createTextEditorDecorationType({
-        textDecoration: "underline"
+        textDecoration: ""
     });
 
     private _documents = new Map<string, FilterDocument>;

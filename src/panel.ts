@@ -39,6 +39,7 @@ export class FilterItem extends vscode.TreeItem {
         this.setRegex(regex);
     }
 
+
     getRegexString(): string {
         if (this.label && typeof this.label === 'string') {
             return this.label as string;
@@ -82,6 +83,17 @@ export class FilterItem extends vscode.TreeItem {
 	changeMode() {
         this.setMode((this.mode as number + 1) % 3);
 	}
+
+    static build(data: any) {
+        return new FilterItem(data['regex'], data['mode']);
+    }
+
+    toJSON() {
+        return {
+            regex: this.getRegexString(),
+            mode: this.getMode()
+        };
+    }
 }
 
 export class EntryList implements vscode.TreeDataProvider<FilterItem> {
@@ -107,6 +119,7 @@ export class EntryList implements vscode.TreeDataProvider<FilterItem> {
     add(regex: string) {
         this.regexList.push(new FilterItem(regex, FilterItemMode.Hide));
         this._onDidChangeTreeData.fire(undefined);
+        this.save();
     }
 
 	remove(item: FilterItem) {
@@ -117,11 +130,48 @@ export class EntryList implements vscode.TreeDataProvider<FilterItem> {
                 return;
             }
         }
+        this.save();
 	}
 
 	update(item: FilterItem) {
         this._onDidChangeTreeData.fire(item);
+        this.save();
 	}
+
+    save() {
+        let workspaceDir = vscode.workspace.workspaceFolders;
+        if (!workspaceDir || workspaceDir.length === 0) {
+            return;
+        }
+        let configPath = workspaceDir[0].uri.fsPath;
+        configPath = path.join(configPath, ".textfilter");
+        let data = {
+            regex: this.regexList.map(item => item.toJSON())
+        };
+        let fs = require("fs");
+        fs.writeFile(configPath, JSON.stringify(data), (err: any)=>{
+            if (err) {
+                return console.error(err);
+            }
+        });
+    }
+
+    load() {
+        let workspaceDir = vscode.workspace.workspaceFolders;
+        if (!workspaceDir || workspaceDir.length === 0) {
+            return;
+        }
+        let configPath = workspaceDir[0].uri.fsPath;
+        configPath = path.join(configPath, ".textfilter");
+        let fs = require("fs");
+        fs.readFile(configPath, (err: any, data: any)=>{
+            let loadedData = JSON.parse(data.toString());
+            for (let item of loadedData['regex']) {
+                this.regexList.push(FilterItem.build(item));
+            }
+            this._onDidChangeTreeData.fire(undefined);
+        });
+    }
 }
 
 

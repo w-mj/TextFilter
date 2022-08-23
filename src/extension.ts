@@ -6,8 +6,6 @@ import { regexRules } from './panel';
 
 
 export function activate(context: ExtensionContext) {
-	console.log('Congratulations, your extension "logviewer" is now active!');
-
 	const provider = new Provider();
 
 	const providerRegisters = Disposable.from(
@@ -24,8 +22,6 @@ export function activate(context: ExtensionContext) {
 	});
 
 	context.subscriptions.push(provider, commandRegistration, providerRegisters);
-
-	regexRules.add("^$");
 
 	window.registerTreeDataProvider('rule-panel', regexRules);
 
@@ -65,6 +61,9 @@ export function activate(context: ExtensionContext) {
 		regexRules.update(item);
 		provider.update(undefined);
 	});
+
+
+	regexRules.load();
 }
 
 // this method is called when your extension is deactivated
