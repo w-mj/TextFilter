@@ -14,7 +14,7 @@ export function activate(context: ExtensionContext) {
 	);
 
 
-	const commandRegistration = commands.registerTextEditorCommand('logviewer.showLog', editor => {
+	const commandRegistration = commands.registerTextEditorCommand('textfilter.show', editor => {
 		const logUri = Uri.parse(`${Provider.scheme}:${editor.document.uri.toString()}`);
 		// console.log(logUri);
 		return workspace.openTextDocument(logUri)
@@ -25,7 +25,7 @@ export function activate(context: ExtensionContext) {
 
 	window.registerTreeDataProvider('rule-panel', regexRules);
 
-	commands.registerCommand('logviewer.add-rule', ()=>{
+	commands.registerCommand('textfilter.add-rule', ()=>{
 		window.showInputBox({
 			prompt: "input regex",
 		}).then(doc => {
@@ -36,12 +36,12 @@ export function activate(context: ExtensionContext) {
 		});
 	});
 
-	commands.registerCommand('logviewer.rm-rule', (item)=>{
+	commands.registerCommand('textfilter.rm-rule', (item)=>{
 		regexRules.remove(item);
 		provider.update(undefined);
 	});
 
-	commands.registerCommand('logviewer.edit-rule', (item: panel.FilterItem)=>{
+	commands.registerCommand('textfilter.edit-rule', (item: panel.FilterItem)=>{
 		window.showInputBox({
 			value: item.getRegexString()
 		}).then(doc => {
@@ -56,7 +56,7 @@ export function activate(context: ExtensionContext) {
 		});
 	});
 
-	commands.registerCommand("logviewer.change-mode", (item: panel.FilterItem)=>{
+	commands.registerCommand("textfilter.change-mode", (item: panel.FilterItem)=>{
 		item.changeMode();
 		regexRules.update(item);
 		provider.update(undefined);

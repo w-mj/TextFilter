@@ -1,6 +1,6 @@
 {
-  "name": "logviewer",
-  "displayName": "logviewer",
+  "name": "textfilter",
+  "displayName": "textfilter",
   "description": "",
   "version": "0.0.1",
   "engines": {
@@ -10,18 +10,18 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:logviewer.showLog"
+    "onCommand:textfilter.show"
   ],
   "main": "./out/extension.js",
 
   "contributes": {
     "commands": [
       {
-        "command": "logviewer.showLog",
-        "title": "LogViewer"
+        "command": "textfilter.show",
+        "title": "textfilter"
       },
       {
-        "command": "logviewer.add-rule",
+        "command": "textfilter.add-rule",
         "title": "添加规则",
         "icon": {
           "dark": "resources/dark/plus.svg",
@@ -29,7 +29,7 @@
         }
       },
       {
-        "command": "logviewer.rm-rule",
+        "command": "textfilter.rm-rule",
         "title": "删除规则",
         "icon": {
           "dark": "resources/dark/minus.svg",
@@ -37,7 +37,7 @@
         }
       },
       {
-        "command": "logviewer.edit-rule",
+        "command": "textfilter.edit-rule",
         "title": "修改规则",
         "icon": {
           "dark": "resources/dark/pencil.svg",
@@ -45,21 +45,21 @@
         }
       },
       {
-        "command": "logviewer.change-mode",
+        "command": "textfilter.change-mode",
         "title": "Change Mode"
       }
     ],
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "logviewer-panel",
-          "title": "LogViewer",
+          "id": "textfilter-panel",
+          "title": "textfilter",
           "icon": "resources/icon.svg"
         }
       ]
     },
     "views": {
-      "logviewer-panel": [
+      "textfilter-panel": [
         {
           "id": "rule-panel",
           "name": "规则列表"
@@ -69,19 +69,19 @@
     "menus": {
       "view/title": [
         {
-          "command": "logviewer.add-rule",
+          "command": "textfilter.add-rule",
           "when": "view == rule-panel",
           "group": "navigation"
         }
       ],
       "view/item/context": [
         {
-          "command": "logviewer.rm-rule",
+          "command": "textfilter.rm-rule",
           "when": "view == rule-panel ",
           "group": "inline"
         },
         {
-          "command": "logviewer.edit-rule",
+          "command": "textfilter.edit-rule",
           "when": "view == rule-panel",
           "group": "inline"
         }

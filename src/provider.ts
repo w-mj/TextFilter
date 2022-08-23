@@ -60,7 +60,7 @@ export default class Provider implements
         return this._documents.get(document.uri.toString())?.getLinks();
     }
 
-    static scheme = 'logviewer';
+    static scheme = 'textfilter';
 
     private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
     onDidChange: vscode.Event<vscode.Uri> = this._onDidChange.event;

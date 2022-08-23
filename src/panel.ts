@@ -23,7 +23,7 @@ class FilterItemCommand implements vscode.Command {
     arguments?: any[] | undefined;
     constructor(item: FilterItem) {
         this.title = "Change Mode";
-        this.command = "logviewer.change-mode";
+        this.command = "textfilter.change-mode";
         this.tooltip = "Change Mode";
         this.arguments = [item];
     }
